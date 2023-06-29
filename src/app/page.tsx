@@ -1,9 +1,14 @@
 import Link from 'next/link';
 import { prisma } from './db';
+import { TodoItem } from '@/components/TodoItem';
+
+const getTodos = async () => {
+  const todos = await prisma.todo.findMany();
+  return todos;
+};
 
 export default async function Home() {
-  const todos = await prisma.todo.findMany();
-
+  const todos = await getTodos();
   return (
     <>
       <header className='flex justify-between mb-4 items-center'>
@@ -17,11 +22,7 @@ export default async function Home() {
       </header>
       <ul className='pl-4'>
         {todos.map((todo) => (
-          <li key={todo.id} className='mb-2'>
-            <Link href={`/${todo.id}`}>
-              <a className='text-slate-700 hover:text-slate-900'>{todo.name}</a>
-            </Link>
-          </li>
+          <TodoItem key={todo.id} {...todo} />
         ))}
       </ul>
     </>
