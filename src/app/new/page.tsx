@@ -1,13 +1,24 @@
 import Link from 'next/link';
+import { prisma } from '../db';
+import { redirect } from 'next/navigation';
 
-type formData = {
-  title: string;
-};
-
-const createTodo = async (data: formData) => {
+const createTodo = async (data: FormData) => {
   'use server';
+  const title = data.get('title')?.valueOf();
 
-  console.log('hi');
+  if (typeof title !== 'string' || title.length === 0) {
+    throw new Error('Title is required');
+  }
+
+  await prisma.todo.create({
+    data: {
+      title,
+      complete: false,
+    },
+  });
+
+  // after creating a todo, redirect to the index page
+  redirect('/');
 };
 
 export default function New() {
@@ -16,7 +27,7 @@ export default function New() {
       <header className='flex justify-between mb-4 items-center'>
         <h1 className='text-2xl'>New</h1>
       </header>
-      <form className='flex gap-2 flex-col'>
+      <form className='flex gap-2 flex-col' action={createTodo}>
         <input
           type='text'
           name='title'
