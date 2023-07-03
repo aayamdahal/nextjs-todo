@@ -1,1 +1,1 @@
-import {PrimsaClient} from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
